@@ -1,28 +1,15 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
+import { prisma } from '../../../db';
 
 export const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
-  // Dummy user data
-  const users = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      createdAt: '2024-01-15T10:30:00Z',
+  // Fetch users from database using Prisma
+  const users = await prisma.user.findMany({
+    orderBy: {
+      createdAt: 'desc',
     },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      createdAt: '2024-01-16T14:20:00Z',
-    },
-    {
-      id: 3,
-      name: 'Bob Johnson',
-      email: 'bob.johnson@example.com',
-      createdAt: '2024-01-17T09:15:00Z',
-    },
-  ];
+  });
 
+  // Prisma returns Date objects, Fastify will serialize them to ISO strings
   return reply.code(200).send({
     success: true,
     data: users,

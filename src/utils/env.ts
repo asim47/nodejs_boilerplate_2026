@@ -35,3 +35,8 @@ export const env = {
   },
 } as const;
 
+// Set DATABASE_URL for Prisma if not already set
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = `postgresql://${env.POSTGRES.USER}:${env.POSTGRES.PASSWORD}@${env.POSTGRES.HOST}:${env.POSTGRES.PORT}/${env.POSTGRES.DB}?schema=public`;
+}
+

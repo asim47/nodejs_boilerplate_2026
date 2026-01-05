@@ -1,29 +1,59 @@
 # Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Build output
+# Build outputs
 dist/
+build/
+*.tsbuildinfo
 
 # Environment variables
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
 
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Logs
+logs/
+*.log
+
+# Prisma
+# Note: migrations are tracked, but generated client is not
+# prisma/migrations/ is tracked (keep migrations in git)
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Docker
+.dockerignore
+
+# Misc
+.cache/
+.parcel-cache/
+.next/
+out/
+.nuxt/
