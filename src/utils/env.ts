@@ -24,5 +24,14 @@ export const env = {
     FROM_EMAIL: process.env.BREVO_FROM_EMAIL || 'noreply@example.com',
     FROM_NAME: process.env.BREVO_FROM_NAME || 'API',
   },
+
+  // PostgreSQL Database
+  POSTGRES: {
+    USER: process.env.POSTGRES_USER || 'postgres',
+    PASSWORD: process.env.POSTGRES_PASSWORD || 'postgres',
+    DB: process.env.POSTGRES_DB || 'nodejs_boilerplate',
+    HOST: process.env.POSTGRES_HOST || 'localhost',
+    PORT: parseInt(process.env.POSTGRES_PORT || '5432', 10),
+  },
 } as const;
 
