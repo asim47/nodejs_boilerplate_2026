@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { setupRoutes } from './routes';
 import { setupCors } from './helpers';
+import { handleError } from './utils/errorHandler';
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,9 @@ app.use(express.json());
 
 // Setup all routes and route-specific middleware
 setupRoutes(app);
+
+// Error handler middleware (must be last)
+app.use(handleError);
 
 // Start server
 app.listen(PORT, () => {
