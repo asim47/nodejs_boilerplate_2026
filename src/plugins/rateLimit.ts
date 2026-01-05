@@ -8,4 +8,3 @@ export async function setupRateLimit(app: FastifyInstance): Promise<void> {
     timeWindow: '15 minutes',
   });
 }
-

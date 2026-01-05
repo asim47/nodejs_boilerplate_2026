@@ -1,4 +1,9 @@
-import { PutObjectAclCommand, PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import {
+  PutObjectAclCommand,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { logger } from '../../utils/logger';
 import { env } from '../../utils/env';
@@ -42,7 +47,7 @@ export async function makeFilePublic(key: string): Promise<void> {
       Bucket: env.AWS.BUCKET_NAME,
       Key: key,
       ACL: 'public-read',
-    }),
+    })
   );
 }
 

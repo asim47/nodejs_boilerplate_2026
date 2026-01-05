@@ -39,6 +39,9 @@ logs/
 # Note: migrations are tracked, but generated client is not
 # prisma/migrations/ is tracked (keep migrations in git)
 
+# Husky
+.husky/_/
+
 # Temporary files
 tmp/
 temp/

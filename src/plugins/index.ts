@@ -4,7 +4,6 @@ import { setupSecurity } from './security';
 import { setupRateLimit } from './rateLimit';
 import { setupSwagger } from './swagger';
 import { setupMultipart } from './multipart';
-import { env } from '../utils/env';
 
 export async function setupPlugins(app: FastifyInstance): Promise<void> {
   // Swagger (should be registered early)
@@ -22,4 +21,3 @@ export async function setupPlugins(app: FastifyInstance): Promise<void> {
   // Multipart (file upload)
   await setupMultipart(app);
 }
-

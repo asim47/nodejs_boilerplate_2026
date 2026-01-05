@@ -14,7 +14,7 @@ export async function readTemplate(
 
     // Replace template variables with data
     // Supports {{variableName}} syntax
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       const regex = new RegExp(`{{${key}}}`, 'g');
       template = template.replace(regex, String(data[key]));
     });
@@ -25,4 +25,3 @@ export async function readTemplate(
     throw new Error(`Template ${templateName} not found or could not be loaded`);
   }
 }
-

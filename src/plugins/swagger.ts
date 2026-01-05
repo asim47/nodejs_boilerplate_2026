@@ -37,7 +37,6 @@ export async function setupSwagger(app: FastifyInstance): Promise<void> {
       deepLinking: false,
     },
     staticCSP: true,
-    transformStaticCSP: (header) => header,
+    transformStaticCSP: header => header,
   });
 }
-

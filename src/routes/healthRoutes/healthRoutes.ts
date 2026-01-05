@@ -8,7 +8,7 @@ const healthResponseSchema = z.object({
   status: z.string(),
 });
 
-function healthRoutes(app: FastifyInstance, ctx: RouteContext) {
+function healthRoutes(app: FastifyInstance, _ctx: RouteContext) {
   app.get(
     '/health',
     {

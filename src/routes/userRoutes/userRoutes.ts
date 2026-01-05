@@ -8,9 +8,8 @@ import {
   createUserResponseSchema,
 } from '../../schemas/userSchemas';
 import { createFastifySchema, withOpenApiMetadata } from '../../utils/swaggerSchemas';
-import { z } from 'zod';
 
-function userRoutes(app: FastifyInstance, ctx: RouteContext) {
+function userRoutes(app: FastifyInstance, _ctx: RouteContext) {
   // GET /api/users
   app.get(
     '/api/users',

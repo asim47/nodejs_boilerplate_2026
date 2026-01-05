@@ -39,4 +39,3 @@ export const env = {
 if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = `postgresql://${env.POSTGRES.USER}:${env.POSTGRES.PASSWORD}@${env.POSTGRES.HOST}:${env.POSTGRES.PORT}/${env.POSTGRES.DB}?schema=public`;
 }
-

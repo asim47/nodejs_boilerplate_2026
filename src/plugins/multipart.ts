@@ -8,4 +8,3 @@ export async function setupMultipart(app: FastifyInstance): Promise<void> {
     },
   });
 }
-

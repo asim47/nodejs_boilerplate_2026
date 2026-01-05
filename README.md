@@ -19,45 +19,52 @@ A modern Node.js TypeScript boilerplate built with Fastify, Prisma, and PostgreS
 
 ## 📋 Prerequisites
 
-- Node.js 20+ 
+- Node.js 20+
 - Docker and Docker Compose (for PostgreSQL)
 - npm or yarn
 
 ## 🛠️ Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd nodejs_boilerplate_2026
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
 4. Start PostgreSQL database:
+
 ```bash
 npm run db:up
 ```
 
 5. Run database migrations:
+
 ```bash
 npx prisma migrate dev --name init
 ```
 
 6. Generate Prisma Client:
+
 ```bash
 npm run db:generate
 ```
 
 7. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -67,12 +74,14 @@ The server will be running at `http://localhost:3000` (or your configured PORT).
 ## 📜 Available Scripts
 
 ### Development
+
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Build the project for production
 - `npm run start` - Start production server
 - `npm run type-check` - Run TypeScript type checking
 
 ### Database
+
 - `npm run db:up` - Start PostgreSQL container
 - `npm run db:down` - Stop and remove PostgreSQL container
 - `npm run db:stop` - Stop PostgreSQL container (keeps data)
@@ -83,6 +92,7 @@ The server will be running at `http://localhost:3000` (or your configured PORT).
 - `npm run db:studio` - Open Prisma Studio (database GUI)
 
 ### Database Migrations
+
 - `npx prisma migrate dev --name <migration_name>` - Create and apply a new migration
 - `npm run db:migrate:deploy` - Deploy migrations (production)
 - `npm run db:migrate:reset` - Reset database and apply all migrations
@@ -149,7 +159,9 @@ nodejs_boilerplate_2026/
 ## 🏗️ Architecture Overview
 
 ### Route Structure
+
 Each feature module follows this pattern:
+
 ```
 routes/
   └── moduleName/
@@ -160,11 +172,13 @@ routes/
 ```
 
 ### Database Access
+
 - Use Prisma Client imported from `src/db`
 - Example: `import { prisma } from '../../../db'`
 - Access models: `prisma.user.findMany()`, `prisma.user.create()`, etc.
 
 ### Schema Validation
+
 - Zod schemas are defined in `src/schemas/`
 - Schemas are used for:
   - Request validation (body, params, query)
@@ -172,6 +186,7 @@ routes/
   - Type inference
 
 ### Error Handling
+
 - Custom `HttpError` class for application errors
 - Global error handler catches:
   - Zod validation errors
@@ -193,16 +208,19 @@ See `.env.example` for all available environment variables:
 ### Database Migrations
 
 To create a new migration:
+
 ```bash
 npx prisma migrate dev --name <descriptive_migration_name>
 ```
 
 This will:
+
 1. Create a new migration file in `prisma/migrations/`
 2. Apply the migration to your database
 3. Regenerate the Prisma Client
 
 Example:
+
 ```bash
 npx prisma migrate dev --name add_posts_table
 ```
@@ -210,6 +228,7 @@ npx prisma migrate dev --name add_posts_table
 ## 📚 API Documentation
 
 Once the server is running, visit:
+
 - **Swagger UI**: `http://localhost:3000/api-docs`
 
 The Swagger documentation is auto-generated from your route schemas and Zod validations.
@@ -217,6 +236,7 @@ The Swagger documentation is auto-generated from your route schemas and Zod vali
 ## 🗄️ Database
 
 ### Prisma Schema
+
 Define your database models in `prisma/schema.prisma`. Example:
 
 ```prisma
@@ -242,26 +262,26 @@ const users = await prisma.user.findMany();
 
 // Find one
 const user = await prisma.user.findUnique({
-  where: { id: 1 }
+  where: { id: 1 },
 });
 
 // Create
 const newUser = await prisma.user.create({
   data: {
     name: 'John Doe',
-    email: 'john@example.com'
-  }
+    email: 'john@example.com',
+  },
 });
 
 // Update
 const updatedUser = await prisma.user.update({
   where: { id: 1 },
-  data: { name: 'Jane Doe' }
+  data: { name: 'Jane Doe' },
 });
 
 // Delete
 await prisma.user.delete({
-  where: { id: 1 }
+  where: { id: 1 },
 });
 ```
 
@@ -295,15 +315,18 @@ await prisma.user.delete({
 ## 🐛 Troubleshooting
 
 ### Database Connection Issues
+
 - Ensure PostgreSQL container is running: `npm run db:up`
 - Check database credentials in `.env`
 - Test connection: `npm run db:test`
 
 ### Prisma Client Issues
+
 - Regenerate client: `npm run db:generate`
 - Check schema syntax: `npx prisma validate`
 
 ### Migration Issues
+
 - Reset database: `npm run db:migrate:reset`
 - Check migration status: `npx prisma migrate status`
 
@@ -321,4 +344,3 @@ ISC
 ## 📞 Support
 
 For issues and questions, please open an issue on the repository.
-

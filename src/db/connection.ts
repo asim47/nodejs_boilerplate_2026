@@ -37,11 +37,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Test connection on startup
-prisma.$connect()
+prisma
+  .$connect()
   .then(() => {
     logger.info('Database connected successfully');
   })
-  .catch((error) => {
+  .catch(error => {
     logger.error('Failed to connect to database', error);
     process.exit(1);
   });

@@ -18,10 +18,7 @@ export interface EmailOptions {
 // Initialize Brevo API instance
 const getApiInstance = (): brevo.TransactionalEmailsApi => {
   const apiInstance = new brevo.TransactionalEmailsApi();
-  apiInstance.setApiKey(
-    brevo.TransactionalEmailsApiApiKeys.apiKey,
-    env.BREVO.API_KEY
-  );
+  apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, env.BREVO.API_KEY);
   return apiInstance;
 };
 
@@ -51,7 +48,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
     // Handle single or multiple recipients
     if (Array.isArray(to)) {
-      sendSmtpEmail.to = to.map((email) => ({ email }));
+      sendSmtpEmail.to = to.map(email => ({ email }));
     } else {
       sendSmtpEmail.to = [{ email: to }];
     }
@@ -71,4 +68,3 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     throw error;
   }
 }
-
