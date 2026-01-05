@@ -62,6 +62,51 @@ export async function errorHandler(
     return;
   }
 
+  // Prisma errors
+
+  if (
+    (error as any).code &&
+    typeof (error as any).code === 'string' &&
+    (error as any).code.startsWith('P')
+  ) {
+    const prismaError = error as any;
+    logger.error('Prisma error', error, {
+      path: request.url,
+      method: request.method,
+      code: prismaError.code,
+    });
+
+    // Provide more helpful error messages for common Prisma errors
+    let message = 'Database error';
+    if (prismaError.code === 'P2002') {
+      message = 'A record with this value already exists';
+    } else if (prismaError.code === 'P2025') {
+      message = 'Record not found';
+    } else if (prismaError.code === 'P2014') {
+      message = 'Invalid relation or constraint violation';
+    } else if (prismaError.message) {
+      // Extract a more readable message from Prisma error
+      const errorMsg = prismaError.message;
+      if (errorMsg.includes('column') && errorMsg.includes('does not exist')) {
+        message = 'Database schema mismatch. Please run migrations: npx prisma migrate dev';
+      } else if (errorMsg.includes('Unknown argument')) {
+        message = 'Invalid query parameter';
+      } else {
+        // Take first line of error message for cleaner output
+        message = errorMsg.split('\n')[0] || 'Database error';
+      }
+    }
+
+    await reply.code(400).send({
+      success: false,
+      message,
+      ...(process.env.NODE_ENV === 'development' && {
+        details: prismaError.message,
+      }),
+    });
+    return;
+  }
+
   // Generic Error
   if (error instanceof Error) {
     logger.error('Unhandled error', error, {

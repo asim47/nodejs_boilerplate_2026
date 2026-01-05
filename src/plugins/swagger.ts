@@ -24,9 +24,15 @@ export async function setupSwagger(app: FastifyInstance): Promise<void> {
             type: 'http',
             scheme: 'bearer',
             bearerFormat: 'JWT',
+            description: 'Enter JWT token',
           },
         },
       },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
     },
   });
 

@@ -1,9 +1,18 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { prisma } from '../../../db';
+import { AuthenticatedRequest } from '../../../middleware/isAuthenticated';
 
-export const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
-  // Fetch users from database using Prisma
+export const getUsers = async (request: AuthenticatedRequest, reply: FastifyReply) => {
+  // Fetch users from database using Prisma (exclude passwords)
   const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
     orderBy: {
       createdAt: 'desc',
     },

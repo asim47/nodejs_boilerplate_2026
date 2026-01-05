@@ -33,6 +33,12 @@ export const env = {
     HOST: process.env.POSTGRES_HOST || 'localhost',
     PORT: parseInt(process.env.POSTGRES_PORT || '5432', 10),
   },
+
+  // JWT
+  JWT: {
+    SECRET: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+    EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+  },
 } as const;
 
 // Set DATABASE_URL for Prisma if not already set

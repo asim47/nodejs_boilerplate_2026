@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import userRoutes from './userRoutes/userRoutes';
 import healthRoutes from './healthRoutes/healthRoutes';
+import authRoutes from './authRoutes/authRoutes';
 import { RouteContext } from '../types/routeContext';
 
 export async function setupRoutes(app: FastifyInstance): Promise<void> {
@@ -17,5 +18,6 @@ export async function setupRoutes(app: FastifyInstance): Promise<void> {
 
   // API Routes (this will register schemas)
   healthRoutes(app, ctx);
+  authRoutes(app, ctx);
   userRoutes(app, ctx);
 }

@@ -110,12 +110,17 @@ nodejs_boilerplate_2026/
 │   │   ├── index.ts          # Database exports
 │   │   └── migrations/       # Migration utilities (if needed)
 │   ├── helpers/              # Helper functions
+│   │   ├── auth/
+│   │   │   ├── bcrypt.ts     # Password hashing and verification
+│   │   │   └── jwt.ts        # JWT token generation and verification
 │   │   ├── aws/
 │   │   │   └── s3.ts         # AWS S3 file upload functions
 │   │   ├── email/
 │   │   │   ├── email.ts      # Email sending functions
 │   │   │   └── templates/   # HTML email templates
 │   │   └── index.ts          # Helper exports
+│   ├── middleware/           # Middleware functions
+│   │   └── isAuthenticated.ts # JWT authentication middleware
 │   ├── plugins/              # Fastify plugins
 │   │   ├── cors.ts           # CORS configuration
 │   │   ├── multipart.ts      # File upload configuration
@@ -124,6 +129,11 @@ nodejs_boilerplate_2026/
 │   │   ├── swagger.ts        # Swagger/OpenAPI configuration
 │   │   └── index.ts          # Plugin exports
 │   ├── routes/               # API routes
+│   │   ├── authRoutes/
+│   │   │   ├── controllers/
+│   │   │   │   ├── signup.ts
+│   │   │   │   └── login.ts
+│   │   │   └── authRoutes.ts
 │   │   ├── healthRoutes/
 │   │   │   ├── controllers/
 │   │   │   │   └── healthController.ts
@@ -135,6 +145,7 @@ nodejs_boilerplate_2026/
 │   │   │   └── userRoutes.ts
 │   │   └── index.ts          # Route registration
 │   ├── schemas/              # Zod validation schemas
+│   │   ├── authSchemas.ts    # Authentication schemas
 │   │   ├── userSchemas.ts    # User-related schemas
 │   │   └── index.ts          # Schema exports
 │   ├── types/                # TypeScript type definitions
@@ -202,12 +213,16 @@ See `.env.example` for all available environment variables:
 
 - **Server**: `PORT`, `NODE_ENV`
 - **PostgreSQL**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST`, `POSTGRES_PORT`
+- **JWT**: `JWT_SECRET`, `JWT_EXPIRES_IN`
 - **AWS S3**: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET_NAME`, `AWS_CLOUDFRONT_DOMAIN`
 - **Brevo Email**: `BREVO_API_KEY`, `BREVO_API_URL`, `BREVO_FROM_EMAIL`, `BREVO_FROM_NAME`
 
 ### Database Migrations
 
-To create a new migration:
+#### Standard Workflow (Recommended)
+
+1. **Modify `prisma/schema.prisma`** - Make your changes to the models
+2. **Run migration command**:
 
 ```bash
 npx prisma migrate dev --name <descriptive_migration_name>
@@ -215,15 +230,61 @@ npx prisma migrate dev --name <descriptive_migration_name>
 
 This will:
 
-1. Create a new migration file in `prisma/migrations/`
-2. Apply the migration to your database
-3. Regenerate the Prisma Client
+- Create a new migration file in `prisma/migrations/`
+- Apply the migration to your database
+- Regenerate the Prisma Client automatically
 
 Example:
 
 ```bash
-npx prisma migrate dev --name add_posts_table
+# 1. Edit schema.prisma - add a field to User model
+# 2. Run:
+npx prisma migrate dev --name add_phone_to_users
 ```
+
+#### Manual Migration Creation (For Custom SQL)
+
+When you need custom SQL (e.g., handling existing data, complex transformations):
+
+1. **Modify `prisma/schema.prisma`** - Make your changes
+2. **Create migration file without applying**:
+
+```bash
+npx prisma migrate dev --create-only --name <migration_name>
+```
+
+3. **Edit the migration SQL file** manually if needed:
+   - Located in `prisma/migrations/<timestamp>_<name>/migration.sql`
+4. **Apply the migration**:
+
+```bash
+npx prisma migrate dev
+```
+
+Example:
+
+```bash
+# 1. Edit schema.prisma
+# 2. Create migration file without applying:
+npx prisma migrate dev --create-only --name add_password_to_users
+
+# 3. Edit prisma/migrations/.../migration.sql manually
+# 4. Apply it:
+npx prisma migrate dev
+```
+
+#### Important Notes
+
+- **`npx prisma generate`** - Only regenerates Prisma Client. Does NOT create or apply migrations.
+- **Always modify `schema.prisma` first** - Then create migrations from it using Prisma CLI.
+- **Don't manually create migration files** - Always use Prisma CLI commands to ensure proper tracking.
+- Prisma tracks which migrations have been applied, so always use Prisma CLI commands to create them.
+
+#### When to Use Manual Migration Creation
+
+- Handling existing data (e.g., adding a required field to a table with existing rows)
+- Complex data transformations
+- Custom SQL needed beyond what Prisma generates automatically
 
 ## 📚 API Documentation
 

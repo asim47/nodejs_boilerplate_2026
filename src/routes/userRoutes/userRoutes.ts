@@ -8,12 +8,14 @@ import {
   createUserResponseSchema,
 } from '../../schemas/userSchemas';
 import { createFastifySchema, withOpenApiMetadata } from '../../utils/swaggerSchemas';
+import { isAuthenticated } from '../../middleware/isAuthenticated';
 
 function userRoutes(app: FastifyInstance, _ctx: RouteContext) {
-  // GET /api/users
+  // GET /api/users (protected)
   app.get(
     '/api/users',
     {
+      preHandler: [isAuthenticated],
       schema: withOpenApiMetadata(
         createFastifySchema({
           response: {
@@ -23,17 +25,19 @@ function userRoutes(app: FastifyInstance, _ctx: RouteContext) {
         {
           tags: ['Users'],
           summary: 'Get all users',
-          description: 'Retrieve a list of all users',
+          description: 'Retrieve a list of all users (requires authentication)',
+          security: [{ bearerAuth: [] }],
         }
       ),
     },
     getUsers
   );
 
-  // POST /api/users
+  // POST /api/users (protected)
   app.post(
     '/api/users',
     {
+      preHandler: [isAuthenticated],
       schema: withOpenApiMetadata(
         createFastifySchema({
           body: createUserSchema,
@@ -44,7 +48,8 @@ function userRoutes(app: FastifyInstance, _ctx: RouteContext) {
         {
           tags: ['Users'],
           summary: 'Create a new user',
-          description: 'Create a new user with name and email',
+          description: 'Create a new user with name, email, and password (requires authentication)',
+          security: [{ bearerAuth: [] }],
         }
       ),
     },
