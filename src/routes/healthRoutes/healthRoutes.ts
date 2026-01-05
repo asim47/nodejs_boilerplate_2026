@@ -1,16 +1,34 @@
-import { Express, Router } from 'express';
+import { FastifyInstance } from 'fastify';
 import { getHealth } from './controllers/healthController';
 import { RouteContext } from '../../types/routeContext';
-import { asyncHandler } from '../../utils/controllerWrapper';
+import { z } from 'zod';
+import { createFastifySchema, withOpenApiMetadata } from '../../utils/swaggerSchemas';
 
-function healthRoutes(app: Express, ctx: RouteContext) {
-  const router = Router();
+const healthResponseSchema = z.object({
+  status: z.string(),
+});
 
-  router.get('/', asyncHandler(getHealth));
+function healthRoutes(app: FastifyInstance, ctx: RouteContext) {
+  app.get(
+    '/health',
+    {
+      schema: withOpenApiMetadata(
+        createFastifySchema({
+          response: {
+            200: healthResponseSchema,
+          },
+        }),
+        {
+          tags: ['Health'],
+          summary: 'Health check',
+          description: 'Check if the service is running',
+        }
+      ),
+    },
+    getHealth
+  );
 
-  app.use('/health', router);
   return app;
 }
 
 export default healthRoutes;
-

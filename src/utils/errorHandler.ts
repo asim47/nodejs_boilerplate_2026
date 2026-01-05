@@ -1,14 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
 import { HttpError } from './HttpError';
 import { logger } from './logger';
 
-export function handleError(
+export async function errorHandler(
   error: unknown,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+  request: FastifyRequest,
+  reply: FastifyReply
+): Promise<void> {
   // Zod validation error
   if (error instanceof ZodError) {
     const errors = error.issues.map((issue) => ({
@@ -17,12 +16,12 @@ export function handleError(
     }));
 
     logger.warn('Validation error', {
-      path: req.path,
-      method: req.method,
+      path: request.url,
+      method: request.method,
       errors,
     });
 
-    res.status(400).json({
+    await reply.code(400).send({
       success: false,
       message: 'Validation error',
       errors,
@@ -33,13 +32,29 @@ export function handleError(
   // HttpError (custom error)
   if (error instanceof HttpError) {
     logger.error(`HTTP Error ${error.statusCode}`, error, {
-      path: req.path,
-      method: req.method,
+      path: request.url,
+      method: request.method,
     });
 
-    res.status(error.statusCode).json({
+    await reply.code(error.statusCode).send({
       success: false,
       message: error.message,
+    });
+    return;
+  }
+
+  // Fastify validation error
+  if ((error as any).validation) {
+    logger.warn('Fastify validation error', {
+      path: request.url,
+      method: request.method,
+      validation: (error as any).validation,
+    });
+
+    await reply.code(400).send({
+      success: false,
+      message: 'Validation error',
+      errors: (error as any).validation,
     });
     return;
   }
@@ -47,14 +62,14 @@ export function handleError(
   // Generic Error
   if (error instanceof Error) {
     logger.error('Unhandled error', error, {
-      path: req.path,
-      method: req.method,
+      path: request.url,
+      method: request.method,
     });
 
-    res.status(500).json({
+    await reply.code(500).send({
       success: false,
-      message: process.env.NODE_ENV === 'production' 
-        ? 'Internal server error' 
+      message: process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
         : error.message,
     });
     return;
@@ -62,13 +77,12 @@ export function handleError(
 
   // Unknown error
   logger.error('Unknown error', error, {
-    path: req.path,
-    method: req.method,
+    path: request.url,
+    method: request.method,
   });
 
-  res.status(500).json({
+  await reply.code(500).send({
     success: false,
     message: 'Internal server error',
   });
 }
-

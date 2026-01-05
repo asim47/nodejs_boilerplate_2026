@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export const getUsers = async (req: Request, res: Response): Promise<void> => {
+export const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
   // Dummy user data
   const users = [
     {
@@ -23,10 +23,9 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     },
   ];
 
-  res.status(200).json({
+  return reply.code(200).send({
     success: true,
     data: users,
     count: users.length,
   });
 };
-

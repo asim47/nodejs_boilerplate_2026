@@ -1,43 +1,49 @@
-import express from 'express';
-import dotenv from 'dotenv';
+import Fastify from 'fastify';
+import { setupPlugins } from './plugins';
+import { errorHandler } from './utils/errorHandler';
+import { env } from './utils/env';
 import { setupRoutes } from './routes';
-import { setupCors, setupSecurity, setupRateLimit } from './helpers';
-import { requestLogger } from './middleware/requestLogger';
-import { notFoundHandler } from './middleware/notFound';
-import { handleError } from './utils/errorHandler';
 
-// Load environment variables
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Security middleware (should be first)
-setupSecurity(app);
-
-// CORS
-setupCors(app);
-
-// Rate limiting
-setupRateLimit(app);
-
-// Body parser
-app.use(express.json());
-
-// Request logging
-app.use(requestLogger);
-
-// Setup all routes and route-specific middleware
-setupRoutes(app);
-
-// 404 handler (must be before error handler)
-app.use(notFoundHandler);
-
-// Error handler middleware (must be last)
-app.use(handleError);
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+const app = Fastify({
+  logger: env.NODE_ENV === 'production'
+    ? {
+        level: 'info',
+      }
+    : {
+        level: 'debug',
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'HH:MM:ss Z',
+            ignore: 'pid,hostname',
+            colorize: true,
+          },
+        },
+      },
 });
 
+const PORT = parseInt(env.PORT, 10);
+
+// Set error handler
+app.setErrorHandler(errorHandler);
+
+// Start server
+const start = async () => {
+  try {
+    // Setup plugins first (Swagger needs to be registered before routes to capture them)
+    await setupPlugins(app);
+
+    // Setup routes (Fastify Swagger will automatically pick up routes registered after it)
+    await setupRoutes(app);
+
+    await app.listen({ port: PORT, host: '0.0.0.0' });
+
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();

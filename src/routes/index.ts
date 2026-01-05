@@ -1,16 +1,12 @@
-import { Express, Request, Response } from 'express';
+import { FastifyInstance } from 'fastify';
 import userRoutes from './userRoutes/userRoutes';
 import healthRoutes from './healthRoutes/healthRoutes';
 import { RouteContext } from '../types/routeContext';
-import { setupFileUpload } from '../helpers';
 
-export function setupRoutes(app: Express): Express {
-  // Middleware
-  setupFileUpload(app);
-
-  // Routes
-  app.get('/', (req: Request, res: Response) => {
-    res.json({
+export async function setupRoutes(app: FastifyInstance): Promise<void> {
+  // Root route
+  app.get('/', async (request, reply) => {
+    return reply.send({
       message: 'Welcome to the API!',
       timestamp: new Date().toISOString(),
     });
@@ -19,10 +15,7 @@ export function setupRoutes(app: Express): Express {
   // Route context (can be extended with services, database, etc.)
   const ctx: RouteContext = {};
 
-  // API Routes
+  // API Routes (this will register schemas)
   healthRoutes(app, ctx);
   userRoutes(app, ctx);
-
-  return app;
 }
-

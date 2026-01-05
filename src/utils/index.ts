@@ -1,6 +1,6 @@
 export * from './logger';
 export * from './HttpError';
 export * from './errorHandler';
-export * from './controllerWrapper';
 export * from './env';
+export * from './swaggerSchemas';
 

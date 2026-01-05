@@ -1,26 +1,24 @@
-import { Request, Response } from 'express';
-import { createUserSchema } from '../../../schemas/userSchemas';
-import { HttpError } from '../../../utils';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { CreateUserInput, createUserSchema } from '../../../schemas/userSchemas';
 
-export const createUser = async (req: Request, res: Response): Promise<void> => {
-  // Validate request body with Zod schema
-  
-  
-  const validatedData = createUserSchema.parse(req.body);
+export const createUser = async (
+  request: FastifyRequest<{ Body: CreateUserInput }>,
+  reply: FastifyReply
+) => {
 
-
+  const validatedBody = createUserSchema.parse(request.body);
+  const body = validatedBody; // Already validated by Fastify
 
   // TODO: Create user in database
-  // const user = await userService.create(validatedData);
+  // const user = await userService.create(body);
 
-  res.status(201).json({
+  return reply.code(201).send({
     success: true,
     message: 'User created successfully',
     data: {
       id: 999, // Mock ID
-      ...validatedData,
+      ...body,
       createdAt: new Date().toISOString(),
     },
   });
 };
-
